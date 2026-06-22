@@ -1,0 +1,1078 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CalmTap • Stress Release</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&amp;family=Playfair+Display:wght@700&amp;display=swap');
+
+    :root {
+      --calm-bg: #e0f2fe;
+    }
+
+    body {
+      font-family: 'Inter', system_ui, sans-serif;
+    }
+
+    .title-font {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+
+    .calm-screen {
+      transition: background-color 600ms cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: inset 0 0 80px rgba(0, 0, 0, 0.06);
+    }
+
+    .play-area {
+      position: relative;
+      overflow: hidden;
+      background: linear-gradient(145deg, #e0f2fe 0%, #f0f9ff 100%);
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: transform 0.15s cubic-bezier(0.23, 1, 0.32, 1),
+                  opacity 0.2s ease;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15),
+                  0 0 0 1px rgba(255,255,255,0.4) inset;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      z-index: 30;
+    }
+
+    .orb:hover {
+      transform: scale(1.08);
+    }
+
+    .orb.popping {
+      transform: scale(0.2) !important;
+      opacity: 0 !important;
+      transition: transform 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53),
+                  opacity 0.25s ease;
+    }
+
+    .calm-toast {
+      animation: toast-in 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    @keyframes toast-in {
+      from { opacity: 0; transform: translateY(10px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .particle-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: 20;
+      pointer-events: auto;
+      touch-action: none;
+    }
+
+    .breathing-circle {
+      transition: transform 3.8s cubic-bezier(0.4, 0, 0.2, 1),
+                  background-color 400ms ease;
+      box-shadow: 0 0 0 30px rgba(255,255,255,0.25),
+                  0 25px 60px -15px rgb(0 0 0 / 0.15);
+    }
+
+    .soft-glow {
+      box-shadow: 0 0 25px rgba(255,255,255,0.7),
+                  0 0 55px rgba(224, 242, 254, 0.5);
+    }
+
+    .section-title {
+      letter-spacing: -0.02em;
+    }
+
+    .calm-btn {
+      transition: all 0.1s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    .calm-btn:active {
+      transform: scale(0.96);
+    }
+
+    .stress-orb {
+      animation: float-gentle 2.8s ease-in-out infinite;
+    }
+
+    @keyframes float-gentle {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    .message-log {
+      font-size: 0.875rem;
+      max-height: 92px;
+      overflow-y: auto;
+    }
+
+    .haptic-indicator {
+      animation: haptic-pulse 180ms ease-out;
+    }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-200 min-h-screen">
+  <!-- Top Navigation -->
+  <div class="border-b border-slate-800 bg-slate-950/95 backdrop-blur-lg sticky top-0 z-50">
+    <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+      <div class="flex items-center gap-x-3">
+        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-sky-400 to-violet-400 flex items-center justify-center shadow-inner">
+          <span class="text-3xl">🌿</span>
+        </div>
+        <div>
+          <h1 class="title-font text-3xl font-semibold tracking-tighter">CalmTap</h1>
+          <p class="text-[10px] text-slate-500 -mt-1">STRESS RELEASE</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-x-4">
+        <!-- Score -->
+        <div class="flex items-center bg-slate-900 border border-slate-800 rounded-3xl px-5 py-1.5">
+          <div class="flex items-center gap-x-2">
+            <div class="text-emerald-400">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              </svg>
+            </div>
+            <div>
+              <span id="score" class="font-mono text-2xl font-semibold tabular-nums text-emerald-400">0</span>
+              <span class="text-xs text-slate-500 ml-0.5">calm</span>
+            </div>
+          </div>
+        </div>
+
+        <button onclick="resetScore()"
+                class="px-4 py-1.5 text-sm bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-2xl transition text-slate-400 hover:text-slate-200">
+          Reset
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-5xl mx-auto px-6 pt-8 pb-12">
+    <!-- Header -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center gap-2 px-4 py-1 bg-slate-900 border border-slate-800 rounded-full text-sm mb-4">
+        <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
+        <span class="text-emerald-300">Tap to release. Breathe to restore.</span>
+      </div>
+      <h2 class="title-font text-5xl font-semibold tracking-tighter">Let the tension go.</h2>
+      <p class="mt-2 text-lg text-slate-400 max-w-md mx-auto">Tap the colored screen. Pop the orbs. Feel the calm.</p>
+    </div>
+
+    <!-- Main Interactive Screen -->
+    <div class="max-w-[860px] mx-auto">
+      <div id="play-area"
+           class="play-area calm-screen w-full aspect-[16/10] rounded-3xl border border-slate-700 overflow-hidden relative shadow-2xl cursor-crosshair select-none"
+           style="background-color: #bae6fd;">
+
+        <!-- Breathing visual center element -->
+        <div id="breathing-container"
+             class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-40 pointer-events-none hidden">
+          <div id="breathing-circle"
+               class="breathing-circle w-44 h-44 rounded-full bg-white flex items-center justify-center border border-white/70"
+               style="transform: scale(0.85);">
+            <div class="text-center">
+              <div id="breathe-text" class="text-slate-800 text-xl font-medium tracking-tight">Breathe</div>
+              <div id="breathe-sub" class="text-slate-500 text-xs mt-0.5">with the circle</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Canvas for particles and taps -->
+        <canvas id="canvas" class="particle-canvas"></canvas>
+
+        <!-- Overlay subtle vignette -->
+        <div class="absolute inset-0 pointer-events-none z-10"
+             style="background: radial-gradient(circle at center, transparent 30%, rgba(15,23,42,0.06) 75%);"></div>
+
+        <!-- Floating orbs container -->
+        <div id="orbs-layer" class="absolute inset-0 z-30 pointer-events-none"></div>
+
+        <!-- Center prompt hint -->
+        <div id="hint-text"
+             class="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs px-4 py-1.5 rounded-full bg-white/10 text-white/70 backdrop-blur pointer-events-none z-10">
+          Tap anywhere • Pop the glowing orbs
+        </div>
+      </div>
+
+      <!-- Status row -->
+      <div class="flex items-center justify-between mt-3 px-1 text-xs">
+        <div class="flex items-center gap-x-3 text-slate-400">
+          <div class="flex items-center gap-x-1.5">
+            <div id="haptic-dot" class="w-1.5 h-1.5 rounded-full bg-violet-400"></div>
+            <span id="haptic-status">Haptics ready</span>
+          </div>
+          <div onclick="requestNotificationPermission()" class="cursor-pointer hover:text-slate-200 transition flex items-center gap-x-1">
+            <span id="notif-status">Notifications: off</span>
+          </div>
+        </div>
+        <div class="text-slate-500">Click orbs for bonus calm</div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-5">
+        <button onclick="startBreathing()"
+                class="calm-btn flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-sky-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
+          <div class="text-xl">🌬️</div>
+          <div class="text-sm font-medium">Guided Breathe</div>
+          <div class="text-[10px] text-slate-500">4-7-8 cycle</div>
+        </button>
+
+        <button onclick="triggerColorWave()"
+                class="calm-btn flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-emerald-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
+          <div class="text-xl">🌊</div>
+          <div class="text-sm font-medium">Color Wave</div>
+          <div class="text-[10px] text-slate-500">Gentle palette flow</div>
+        </button>
+
+        <button onclick="triggerReleasePulse()"
+                class="calm-btn flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-violet-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
+          <div class="text-xl">💫</div>
+          <div class="text-sm font-medium">Release Pulse</div>
+          <div class="text-[10px] text-slate-500">Rapid calm release</div>
+        </button>
+
+        <button onclick="sendCalmNotification()"
+                class="calm-btn flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-amber-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
+          <div class="text-xl">🔔</div>
+          <div class="text-sm font-medium">Send Notification</div>
+          <div class="text-[10px] text-slate-500">System + in-app</div>
+        </button>
+
+        <button onclick="clearAllOrbs()"
+                class="calm-btn col-span-2 sm:col-span-1 flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-rose-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
+          <div class="text-xl">🧹</div>
+          <div class="text-sm font-medium">Clear Orbs</div>
+        </button>
+      </div>
+
+      <!-- Message log -->
+      <div class="mt-5 bg-slate-900 border border-slate-800 rounded-3xl px-5 py-3">
+        <div class="flex items-center justify-between mb-2">
+          <div class="uppercase tracking-widest text-xs text-slate-500">Calm Log</div>
+          <button onclick="clearLog()" class="text-xs text-slate-500 hover:text-slate-400">clear</button>
+        </div>
+        <div id="log" class="message-log text-emerald-300/90 space-y-1 font-light pr-1"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tailwind script
+    function initTailwind() {
+      document.documentElement.style.setProperty('--accent', '#64748b');
+    }
+
+    // Game State
+    let calmScore = 0;
+    let currentColor = '#bae6fd';
+    let orbId = 0;
+    let orbs = [];
+    let isBreathing = false;
+    let notificationPermission = 'default';
+    let particles = [];
+    let animationFrame = null;
+
+    const CALMING_COLORS = [
+      '#bae6fd', // sky-200
+      '#a5f3fc', // cyan-200
+      '#c4d0ff', // indigo-200
+      '#ddd6fe', // violet-200
+      '#fbcfe8', // pink-200
+      '#d1fae5', // emerald-200
+      '#fef3c7', // amber-200
+      '#e0e7ff', // indigo-100
+      '#f3e8ff', // fuchsia-100
+    ];
+
+    const CALM_MESSAGES = [
+      "Tension leaving your body...",
+      "You are safe right now.",
+      "Inhale peace. Exhale stress.",
+      "Let go. Just for this moment.",
+      "Softness spreading inside.",
+      "Your breath is your anchor.",
+      "Releasing what no longer serves.",
+      "Notice the quiet inside you.",
+      "Everything can wait.",
+      "One gentle tap at a time.",
+      "The calm is already here.",
+      "You are allowed to rest.",
+    ];
+
+    // Elements
+    const playArea = document.getElementById('play-area');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d', { alpha: true });
+    const orbsLayer = document.getElementById('orbs-layer');
+    const scoreEl = document.getElementById('score');
+    const logEl = document.getElementById('log');
+    const hintText = document.getElementById('hint-text');
+    const breathingContainer = document.getElementById('breathing-container');
+    const breathingCircle = document.getElementById('breathing-circle');
+    const breatheText = document.getElementById('breathe-text');
+    const breatheSub = document.getElementById('breathe-sub');
+    const hapticStatus = document.getElementById('haptic-status');
+    const notifStatus = document.getElementById('notif-status');
+    const hapticDot = document.getElementById('haptic-dot');
+
+    function updateScore(amount = 1) {
+      calmScore += amount;
+      scoreEl.textContent = calmScore;
+
+      // subtle visual pop on score
+      scoreEl.style.transition = 'none';
+      scoreEl.style.transform = 'scale(1.3)';
+      setTimeout(() => {
+        scoreEl.style.transition = 'transform 180ms ease';
+        scoreEl.style.transform = 'scale(1)';
+      }, 10);
+    }
+
+    function resetScore() {
+      calmScore = 0;
+      scoreEl.textContent = '0';
+      addToLog('Session reset. Start fresh.');
+    }
+
+    function setScreenColor(hexColor, instant = false) {
+      currentColor = hexColor;
+      const play = playArea;
+      if (instant) {
+        play.style.transition = 'none';
+        play.style.backgroundColor = hexColor;
+        // force reflow
+        play.offsetHeight;
+        play.style.transition = 'background-color 600ms cubic-bezier(0.4, 0, 0.2, 1)';
+      } else {
+        play.style.backgroundColor = hexColor;
+      }
+    }
+
+    // Particle system
+    class Particle {
+      constructor(x, y, color) {
+        this.x = x;
+        this.y = y;
+        const angle = Math.random() * Math.PI * 2;
+        const speed = 1.5 + Math.random() * 3.2;
+        this.vx = Math.cos(angle) * speed;
+        this.vy = Math.sin(angle) * speed;
+        this.size = 3 + Math.random() * 7.5;
+        this.color = color || '#ffffff';
+        this.alpha = 0.75 + Math.random() * 0.25;
+        this.life = 42 + Math.floor(Math.random() * 34);
+        this.decay = this.life;
+        this.friction = 0.975;
+      }
+      update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vx *= this.friction;
+        this.vy *= this.friction;
+        this.life--;
+        this.alpha = (this.life / this.decay) * 0.92;
+      }
+      draw(ctx) {
+        ctx.save();
+        ctx.globalAlpha = Math.max(this.alpha, 0.08);
+        ctx.fillStyle = this.color;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+
+        // soft glow ring
+        ctx.globalAlpha = this.alpha * 0.35;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size * 1.9, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    function resizeCanvas() {
+      const rect = playArea.getBoundingClientRect();
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+    }
+
+    function spawnParticles(x, y, count = 28, baseColor = null) {
+      const colors = baseColor ? [baseColor] : ['#f0f9ff', '#bae6fd', '#e0e7ff', '#f3e8ff', '#c4d0ff', '#ddd6fe'];
+      for (let i = 0; i < count; i++) {
+        const col = colors[Math.floor(Math.random() * colors.length)];
+        particles.push(new Particle(x, y, col));
+      }
+    }
+
+    function updateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.update();
+        p.draw(ctx);
+
+        if (p.life <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+
+      animationFrame = requestAnimationFrame(updateParticles);
+    }
+
+    // Haptics
+    function triggerHaptic(pattern = [28]) {
+      // Visual haptic cue always
+      const play = playArea;
+      play.classList.add('haptic-indicator');
+      setTimeout(() => play.classList.remove('haptic-indicator'), 180);
+
+      // Real vibration
+      if (navigator.vibrate) {
+        try {
+          navigator.vibrate(pattern);
+          hapticStatus.textContent = 'Haptics triggered';
+          setTimeout(() => {
+            if (hapticStatus.textContent === 'Haptics triggered') {
+              hapticStatus.textContent = 'Haptics ready';
+            }
+          }, 850);
+        } catch (e) {}
+      } else {
+        hapticStatus.textContent = 'Visual only (no vibration API)';
+        setTimeout(() => {
+          hapticStatus.textContent = 'Haptics ready';
+        }, 1200);
+      }
+
+      // Bonus: tiny audio chime
+      playSoftChime(0.65);
+    }
+
+    // Soft audio feedback using Web Audio
+    let audioCtx;
+    function getAudioContext() {
+      if (!audioCtx) {
+        try {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {}
+      }
+      return audioCtx;
+    }
+
+    function playSoftChime(volume = 0.5, freq = 520) {
+      const ctx = getAudioContext();
+      if (!ctx) return;
+
+      try {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        const filter = ctx.createBiquadFilter();
+
+        osc.type = 'sine';
+        osc.frequency.value = freq;
+
+        filter.type = 'lowpass';
+        filter.frequency.value = 980;
+
+        gain.gain.value = volume;
+
+        const decay = ctx.createGain();
+        decay.gain.value = 1;
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(decay);
+        decay.connect(ctx.destination);
+
+        osc.start();
+
+        // soft fade
+        setTimeout(() => {
+          decay.gain.linearRampToValueAtTime(0.001, ctx.currentTime + 0.7);
+        }, 40);
+
+        setTimeout(() => {
+          osc.stop();
+          osc.disconnect();
+        }, 900);
+      } catch (e) {}
+    }
+
+    // Toast / In-app notifications
+    function addToLog(message, isHighlight = false) {
+      const div = document.createElement('div');
+      div.className = `flex items-start gap-2 py-0.5 px-1 text-xs rounded ${isHighlight ? 'text-emerald-300' : 'text-emerald-300/70'}`;
+      div.innerHTML = `
+        <span class="block mt-[2px] text-[8px] text-emerald-400/50">•</span>
+        <span>${message}</span>
+      `;
+
+      logEl.prepend(div);
+
+      // cap the number of entries
+      while (logEl.children.length > 6) {
+        logEl.lastChild.remove();
+      }
+    }
+
+    function showToast(message) {
+      const toast = document.createElement('div');
+      toast.className = `calm-toast fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-800 border border-slate-600 text-sm px-5 py-2.5 rounded-3xl shadow-xl flex items-center gap-x-2 text-slate-100 z-[100]`;
+      toast.innerHTML = `
+        <span>✧</span>
+        <span>${message}</span>
+      `;
+
+      document.body.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.transition = 'all 240ms ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translate(-50%, 10px)';
+
+        setTimeout(() => toast.remove(), 180);
+      }, 2100);
+    }
+
+    // Main interaction: click / tap on screen
+    function handleTap(e) {
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.clientX || (e.touches && e.touches[0].clientX) || (rect.left + rect.width/2)) - rect.left;
+      const y = (e.clientY || (e.touches && e.touches[0].clientY) || (rect.top + rect.height/2)) - rect.top;
+
+      // Particle burst
+      spawnParticles(x, y, 32);
+
+      // Change screen color randomly from palette
+      const newColor = CALMING_COLORS[Math.floor(Math.random() * CALMING_COLORS.length)];
+      setScreenColor(newColor);
+
+      // Score + log
+      const pts = Math.random() > 0.75 ? 3 : 1;
+      updateScore(pts);
+
+      const msg = CALM_MESSAGES[Math.floor(Math.random() * CALM_MESSAGES.length)];
+      showToast(msg);
+      addToLog(msg);
+
+      // Haptics + sound
+      const hapticPattern = pts > 1 ? [40, 35, 60] : [35];
+      triggerHaptic(hapticPattern);
+
+      // Hide hint after first interaction
+      if (hintText) hintText.style.opacity = '0.35';
+    }
+
+    // Touch + Mouse support
+    function setupCanvasInteractions() {
+      resizeCanvas();
+      window.addEventListener('resize', () => {
+        resizeCanvas();
+      });
+
+      // Mouse
+      canvas.addEventListener('mousedown', (e) => {
+        handleTap(e);
+        // allow drag taps for more fun
+        const onMove = (ev) => {
+          if (Math.random() < 0.38) handleTap(ev);
+        };
+        const end = () => {
+          canvas.removeEventListener('mousemove', onMove);
+          window.removeEventListener('mouseup', end);
+        };
+        canvas.addEventListener('mousemove', onMove);
+        window.addEventListener('mouseup', end, { once: true });
+      });
+
+      // Touch
+      canvas.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        handleTap(e);
+
+        const onMove = (ev) => {
+          if (Math.random() < 0.3) handleTap(ev);
+        };
+        const endTouch = () => {
+          canvas.removeEventListener('touchmove', onMove);
+        };
+        canvas.addEventListener('touchmove', onMove);
+        canvas.addEventListener('touchend', endTouch, { once: true });
+      }, { passive: false });
+
+      // Bonus: double click for big release
+      let lastTap = 0;
+      canvas.addEventListener('dblclick', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+
+        spawnParticles(x, y, 85, '#ffffff');
+        setScreenColor('#e0e7ff', true);
+
+        updateScore(7);
+        showToast("Big release. You did that.");
+        addToLog("Powerful release felt.", true);
+        triggerHaptic([35, 65, 30, 55, 90]);
+
+        // spawn some orbs for fun
+        setTimeout(() => spawnOrb(), 90);
+        setTimeout(() => spawnOrb(), 340);
+      });
+
+      // Start the particle loop
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      updateParticles();
+    }
+
+    // Floating clickable orbs (stress bubbles)
+    function spawnOrb() {
+      const container = orbsLayer;
+      const rect = playArea.getBoundingClientRect();
+
+      const size = 28 + Math.random() * 26;
+      const x = Math.random() * (rect.width - size * 1.4);
+      const y = Math.random() * (rect.height * 0.82 - size);
+
+      const colors = ['#67e8f9', '#a5b4fc', '#f9a8d4', '#86efac', '#c4b5fd', '#fcd34d'];
+      const orbColor = colors[Math.floor(Math.random() * colors.length)];
+
+      const orb = document.createElement('div');
+      orb.className = `orb stress-orb pointer-events-auto`;
+      orb.style.width = `${size}px`;
+      orb.style.height = `${size}px`;
+      orb.style.left = `${x}px`;
+      orb.style.top = `${y}px`;
+      orb.style.background = `radial-gradient(circle at 35% 30%, #ffffff 8%, ${orbColor} 38%, ${orbColor} 75%)`;
+      orb.style.boxShadow = `0 14px 34px -12px rgb(15 23 42 / 0.45), 0 0 0 1.5px rgba(255,255,255,0.35) inset`;
+
+      // Optional subtle emoji inside
+      if (Math.random() > 0.75) {
+        orb.innerHTML = `<div style="font-size:${size * 0.42}px; opacity:0.3; line-height:1;">✦</div>`;
+        orb.style.alignItems = 'center';
+        orb.style.justifyContent = 'center';
+      }
+
+      const id = ++orbId;
+      orb.dataset.id = id;
+      orbs.push({ id, element: orb });
+
+      orb.addEventListener('click', (e) => {
+        e.stopImmediatePropagation();
+
+        // Pop effect
+        orb.classList.add('popping');
+
+        // Particle splash at orb location
+        const orbRect = orb.getBoundingClientRect();
+        const playRect = playArea.getBoundingClientRect();
+        const localX = orbRect.left - playRect.left + size / 2;
+        const localY = orbRect.top - playRect.top + size / 2;
+
+        spawnParticles(localX, localY, 48, orbColor);
+
+        // Bonus points
+        const bonus = 4 + Math.floor(Math.random() * 3);
+        updateScore(bonus);
+
+        const popMsg = "Orb popped. Stress released.";
+        showToast(popMsg);
+        addToLog(popMsg, true);
+
+        triggerHaptic([20, 40, 25]);
+        playSoftChime(0.75, 660);
+
+        // color flash
+        const old = currentColor;
+        setScreenColor(orbColor);
+        setTimeout(() => {
+          if (currentColor === orbColor) setScreenColor(old);
+        }, 620);
+
+        // Remove
+        setTimeout(() => {
+          if (orb.parentNode) orb.parentNode.removeChild(orb);
+          orbs = orbs.filter(o => o.id !== id);
+        }, 260);
+      });
+
+      container.appendChild(orb);
+
+      // Auto-despawn after ~12 seconds if untouched
+      setTimeout(() => {
+        if (orb.parentNode && !orb.classList.contains('popping')) {
+          orb.style.transition = 'opacity 380ms ease, transform 380ms ease';
+          orb.style.opacity = '0';
+          setTimeout(() => {
+            if (orb.parentNode) orb.parentNode.removeChild(orb);
+            orbs = orbs.filter(o => o.id !== id);
+          }, 80);
+        }
+      }, 12000);
+    }
+
+    function spawnOrbsBatch(count = 2) {
+      for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+          if (document.visibilityState === 'visible') {
+            spawnOrb();
+          }
+        }, i * 170);
+      }
+    }
+
+    function clearAllOrbs() {
+      orbsLayer.innerHTML = '';
+      orbs = [];
+      addToLog('All orbs cleared.');
+    }
+
+    // Guided breathing
+    function startBreathing() {
+      if (isBreathing) return;
+      isBreathing = true;
+
+      const phases = [
+        { label: 'Inhale', sub: 'slowly through nose', scale: 1.42, duration: 3800, color: '#a5f3fc' },
+        { label: 'Hold', sub: 'gentle and easy', scale: 1.42, duration: 2600, color: '#c4d0ff' },
+        { label: 'Exhale', sub: 'release slowly', scale: 0.68, duration: 4300, color: '#bae6fd' },
+      ];
+
+      breathingContainer.classList.remove('hidden');
+      breathingContainer.classList.add('flex', 'items-center', 'justify-center');
+
+      let idx = 0;
+      let cycle = 0;
+
+      function runPhase() {
+        if (!isBreathing) return;
+
+        const phase = phases[idx];
+        breatheText.textContent = phase.label;
+        breatheSub.textContent = phase.sub;
+
+        // Color + scale
+        setScreenColor(phase.color);
+        breathingCircle.style.transition = `transform ${phase.duration}ms cubic-bezier(0.45, 0, 0.25, 1)`;
+        breathingCircle.style.transform = `scale(${phase.scale})`;
+
+        // Haptic pulse on each phase start
+        triggerHaptic(phase.label === 'Exhale' ? [18, 50] : [24]);
+
+        setTimeout(() => {
+          idx = (idx + 1) % phases.length;
+          cycle++;
+
+          if (cycle >= 4) { // finish after a few cycles
+            endBreathing();
+          } else {
+            runPhase();
+          }
+        }, phase.duration);
+      }
+
+      // Start first phase
+      breathingCircle.style.transform = 'scale(0.8)';
+      setTimeout(() => {
+        runPhase();
+      }, 80);
+
+      addToLog('Guided breath cycle started.');
+      updateScore(2);
+    }
+
+    function endBreathing() {
+      isBreathing = false;
+
+      breathingCircle.style.transition = 'transform 420ms ease';
+      breathingCircle.style.transform = 'scale(0.8)';
+
+      setTimeout(() => {
+        breathingContainer.classList.add('hidden');
+        breathingContainer.classList.remove('flex');
+        setScreenColor('#bae6fd');
+        breatheText.textContent = 'Breathe';
+        breatheSub.textContent = 'with the circle';
+        addToLog('Breathing complete. Notice the stillness.');
+      }, 420);
+    }
+
+    // Color Wave
+    function triggerColorWave() {
+      const wave = [...CALMING_COLORS];
+      let i = 0;
+
+      addToLog('Color wave flowing...');
+      updateScore(2);
+
+      const interval = setInterval(() => {
+        if (i >= wave.length) {
+          clearInterval(interval);
+          setScreenColor('#bae6fd');
+          return;
+        }
+        setScreenColor(wave[i], i < 2);
+        triggerHaptic([12]);
+        i++;
+      }, 540);
+    }
+
+    // Release Pulse: intense calm trigger
+    function triggerReleasePulse() {
+      addToLog('Release pulse activated.', true);
+      updateScore(4);
+
+      const pulseColors = ['#ddd6fe', '#a5f3fc', '#c4d0ff', '#bae6fd', '#f3e8ff', '#d1fae5'];
+      let p = 0;
+
+      const pulse = setInterval(() => {
+        setScreenColor(pulseColors[p % pulseColors.length], true);
+        triggerHaptic([16, 18]);
+
+        // Small particle bursts at random spots
+        const rx = Math.random() * canvas.width;
+        const ry = Math.random() * canvas.height * 0.9;
+        spawnParticles(rx, ry, 18);
+
+        p++;
+        if (p > 6) {
+          clearInterval(pulse);
+          setTimeout(() => {
+            setScreenColor('#bae6fd');
+          }, 230);
+        }
+      }, 135);
+    }
+
+    // Browser + in-app notifications
+    async function requestNotificationPermission() {
+      if (!('Notification' in window)) {
+        addToLog('Notifications not supported in this browser.');
+        return;
+      }
+
+      try {
+        const perm = await Notification.requestPermission();
+        notificationPermission = perm;
+
+        if (perm === 'granted') {
+          notifStatus.textContent = 'Notifications: on';
+          notifStatus.classList.add('text-emerald-400');
+          showToast('Notifications enabled. You\'ll receive calm reminders.');
+          addToLog('Browser notifications enabled.');
+
+          // fire one immediately as welcome
+          setTimeout(() => {
+            sendCalmNotification(true);
+          }, 620);
+        } else {
+          notifStatus.textContent = 'Notifications: blocked';
+          addToLog('Notification permission not granted.');
+        }
+      } catch (err) {
+        addToLog('Could not request notifications.');
+      }
+    }
+
+    function sendCalmNotification(silent = false) {
+      const messages = [
+        "Take a slow breath. You are doing well.",
+        "Pause. Release your shoulders.",
+        "This moment is yours.",
+        "Remember to be kind to yourself.",
+        "Exhale. The world can wait.",
+      ];
+      const msg = messages[Math.floor(Math.random() * messages.length)];
+
+      // Always in-app
+      showToast(msg);
+      addToLog(msg, true);
+      updateScore(1);
+      triggerHaptic([30, 22]);
+
+      // System notification if permitted
+      if (notificationPermission === 'granted' && 'Notification' in window) {
+        try {
+          const notif = new Notification('CalmTap', {
+            body: msg,
+            icon: 'data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2232%22 height=%2232%22><circle cx=%2216%22 cy=%2216%22 r=%2213%22 fill=%22%2367e8f9%22/></svg>',
+            silent: silent,
+            tag: 'calmtap-' + Date.now()
+          });
+
+          // Auto close after 4s
+          setTimeout(() => notif.close(), 4200);
+        } catch (e) {}
+      } else if (!silent) {
+        // Gentle nudge
+        notifStatus.textContent = 'Tap here to enable';
+        setTimeout(() => {
+          if (notificationPermission !== 'granted') {
+            notifStatus.textContent = 'Notifications: off';
+          }
+        }, 2300);
+      }
+    }
+
+    function clearLog() {
+      logEl.innerHTML = '';
+    }
+
+    // Auto-spawn floating orbs periodically
+    let orbInterval = null;
+    function startOrbSpawner() {
+      // Initial orbs
+      setTimeout(() => spawnOrbsBatch(2), 650);
+      setTimeout(() => spawnOrbsBatch(1), 1800);
+
+      orbInterval = setInterval(() => {
+        // Spawn occasionally when user is idle
+        if (!isBreathing && orbs.length < 5 && document.visibilityState === 'visible') {
+          spawnOrb();
+
+          // chance for double
+          if (Math.random() < 0.3) {
+            setTimeout(() => {
+              if (orbs.length < 6) spawnOrb();
+            }, 380);
+          }
+        }
+      }, 6500);
+    }
+
+    // Keyboard shortcuts for power users
+    function setupKeyboard() {
+      document.addEventListener('keydown', (e) => {
+        if (e.key === ' ' || e.key === 'Spacebar') {
+          e.preventDefault();
+          // random tap in center
+          const rect = canvas.getBoundingClientRect();
+          const fakeEvent = {
+            clientX: rect.left + rect.width * 0.48 + (Math.random() - 0.5) * 80,
+            clientY: rect.top + rect.height * 0.46 + (Math.random() - 0.5) * 50
+          };
+          handleTap(fakeEvent);
+        }
+
+        if (e.key.toLowerCase() === 'b') {
+          startBreathing();
+        }
+
+        if (e.key.toLowerCase() === 'w') {
+          triggerColorWave();
+        }
+
+        if (e.key.toLowerCase() === 'p') {
+          triggerReleasePulse();
+        }
+
+        if (e.key.toLowerCase() === 'n') {
+          sendCalmNotification();
+        }
+
+        if (e.key === 'Escape') {
+          if (isBreathing) {
+            endBreathing();
+          } else {
+            clearAllOrbs();
+          }
+        }
+      });
+
+      // Helpful tip in console
+      console.log('%c[CalmTap] Keyboard: SPACE = tap, B = breathe, W = wave, P = pulse, N = notify, ESC = clear or stop', 'color:#64748b');
+    }
+
+    // Initialize everything
+    function init() {
+      initTailwind();
+
+      // Set initial screen color
+      playArea.style.backgroundColor = currentColor;
+
+      // Canvas setup
+      setupCanvasInteractions();
+
+      // Interactions on the whole play area (fallback)
+      playArea.addEventListener('click', (e) => {
+        // Only if click didn't originate on orb or breathing
+        if (e.target.closest('#orbs-layer') || e.target.closest('#breathing-container')) return;
+        // Canvas handles most but in case
+        if (e.target.id !== 'canvas') {
+          const rect = playArea.getBoundingClientRect();
+          const fake = {
+            clientX: e.clientX,
+            clientY: e.clientY
+          };
+          handleTap(fake);
+        }
+      });
+
+      // Initial hint fade
+      setTimeout(() => {
+        if (hintText && calmScore === 0) hintText.style.transition = 'opacity 1.2s ease';
+      }, 4000);
+
+      // Orb spawner
+      startOrbSpawner();
+
+      // Keyboard
+      setupKeyboard();
+
+      // Seed a couple messages
+      setTimeout(() => {
+        addToLog('Welcome. Begin whenever you\'re ready.');
+      }, 900);
+
+      // Try to detect vibration support
+      if (!navigator.vibrate) {
+        hapticStatus.textContent = 'Visual haptics (mobile best)';
+        hapticDot.style.backgroundColor = '#64748b';
+      }
+
+      // Random gentle orb encouragement
+      setTimeout(() => {
+        if (calmScore === 0 && orbs.length > 0) {
+          // do nothing — orbs will invite interaction
+        }
+      }, 5600);
+
+      // Make first tap super welcoming
+      const firstTap = () => {
+        playArea.removeEventListener('click', firstTap);
+        // The main handler already handles everything
+      };
+
+      // Make canvas capture touches well on mobile
+      canvas.style.touchAction = 'none';
+
+      // Expose some API for fun (dev)
+      window.CalmTap = {
+        burst: () => triggerReleasePulse(),
+        addCalm: (n) => updateScore(n),
+        wave: () => triggerColorWave()
+      };
+
+      // Done
+      console.log('%c[CalmTap] Stress release game initialized. Enjoy the calm.', 'color:#64748b');
+    }
+
+    // Boot
+    window.onload = function() {
+      init();
+    };
+  </script>
+</body>
+</html>
+
