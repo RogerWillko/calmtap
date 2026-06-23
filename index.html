@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -37,9 +37,9 @@
       border-radius: 9999px;
       cursor: pointer;
       transition: transform 0.15s cubic-bezier(0.23, 1, 0.32, 1),
-                  opacity 0.2s ease;
+        opacity 0.2s ease;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15),
-                  0 0 0 1px rgba(255,255,255,0.4) inset;
+        0 0 0 1px rgba(255, 255, 255, 0.4) inset;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -55,7 +55,7 @@
       transform: scale(0.2) !important;
       opacity: 0 !important;
       transition: transform 0.25s cubic-bezier(0.55, 0.085, 0.68, 0.53),
-                  opacity 0.25s ease;
+        opacity 0.25s ease;
     }
 
     .calm-toast {
@@ -63,14 +63,23 @@
     }
 
     @keyframes toast-in {
-      from { opacity: 0; transform: translateY(10px) scale(0.96); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
+      from {
+        opacity: 0;
+        transform: translateY(10px) scale(0.96);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
     }
 
     .particle-canvas {
       position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
       z-index: 20;
       pointer-events: auto;
       touch-action: none;
@@ -78,14 +87,14 @@
 
     .breathing-circle {
       transition: transform 3.8s cubic-bezier(0.4, 0, 0.2, 1),
-                  background-color 400ms ease;
-      box-shadow: 0 0 0 30px rgba(255,255,255,0.25),
-                  0 25px 60px -15px rgb(0 0 0 / 0.15);
+        background-color 400ms ease;
+      box-shadow: 0 0 0 30px rgba(255, 255, 255, 0.25),
+        0 25px 60px -15px rgb(0 0 0 / 0.15);
     }
 
     .soft-glow {
-      box-shadow: 0 0 25px rgba(255,255,255,0.7),
-                  0 0 55px rgba(224, 242, 254, 0.5);
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.7),
+        0 0 55px rgba(224, 242, 254, 0.5);
     }
 
     .section-title {
@@ -105,8 +114,15 @@
     }
 
     @keyframes float-gentle {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-12px); }
+
+      0%,
+      100% {
+        transform: translateY(0);
+      }
+
+      50% {
+        transform: translateY(-12px);
+      }
     }
 
     .message-log {
@@ -120,12 +136,14 @@
     }
   </style>
 </head>
+
 <body class="bg-slate-950 text-slate-200 min-h-screen">
   <!-- Top Navigation -->
   <div class="border-b border-slate-800 bg-slate-950/95 backdrop-blur-lg sticky top-0 z-50">
     <div class="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
       <div class="flex items-center gap-x-3">
-        <div class="w-10 h-10 rounded-2xl bg-gradient-to-br from-sky-400 to-violet-400 flex items-center justify-center shadow-inner">
+        <div
+          class="w-10 h-10 rounded-2xl bg-gradient-to-br from-sky-400 to-violet-400 flex items-center justify-center shadow-inner">
           <span class="text-3xl">🌿</span>
         </div>
         <div>
@@ -139,8 +157,10 @@
         <div class="flex items-center bg-slate-900 border border-slate-800 rounded-3xl px-5 py-1.5">
           <div class="flex items-center gap-x-2">
             <div class="text-emerald-400">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.25"
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
               </svg>
             </div>
             <div>
@@ -151,7 +171,7 @@
         </div>
 
         <button onclick="resetScore()"
-                class="px-4 py-1.5 text-sm bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-2xl transition text-slate-400 hover:text-slate-200">
+          class="px-4 py-1.5 text-sm bg-slate-900 hover:bg-slate-800 border border-slate-700 rounded-2xl transition text-slate-400 hover:text-slate-200">
           Reset
         </button>
       </div>
@@ -161,7 +181,8 @@
   <div class="max-w-5xl mx-auto px-6 pt-8 pb-12">
     <!-- Header -->
     <div class="text-center mb-8">
-      <div class="inline-flex items-center gap-2 px-4 py-1 bg-slate-900 border border-slate-800 rounded-full text-sm mb-4">
+      <div
+        class="inline-flex items-center gap-2 px-4 py-1 bg-slate-900 border border-slate-800 rounded-full text-sm mb-4">
         <div class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></div>
         <span class="text-emerald-300">Tap to release. Breathe to restore.</span>
       </div>
@@ -172,15 +193,15 @@
     <!-- Main Interactive Screen -->
     <div class="max-w-[860px] mx-auto">
       <div id="play-area"
-           class="play-area calm-screen w-full aspect-[16/10] rounded-3xl border border-slate-700 overflow-hidden relative shadow-2xl cursor-crosshair select-none"
-           style="background-color: #bae6fd;">
+        class="play-area calm-screen w-full aspect-[16/10] rounded-3xl border border-slate-700 overflow-hidden relative shadow-2xl cursor-crosshair select-none"
+        style="background-color: #bae6fd;">
 
         <!-- Breathing visual center element -->
         <div id="breathing-container"
-             class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-40 pointer-events-none hidden">
+          class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-40 pointer-events-none hidden">
           <div id="breathing-circle"
-               class="breathing-circle w-44 h-44 rounded-full bg-white flex items-center justify-center border border-white/70"
-               style="transform: scale(0.85);">
+            class="breathing-circle w-44 h-44 rounded-full bg-white flex items-center justify-center border border-white/70"
+            style="transform: scale(0.85);">
             <div class="text-center">
               <div id="breathe-text" class="text-slate-800 text-xl font-medium tracking-tight">Breathe</div>
               <div id="breathe-sub" class="text-slate-500 text-xs mt-0.5">with the circle</div>
@@ -193,14 +214,14 @@
 
         <!-- Overlay subtle vignette -->
         <div class="absolute inset-0 pointer-events-none z-10"
-             style="background: radial-gradient(circle at center, transparent 30%, rgba(15,23,42,0.06) 75%);"></div>
+          style="background: radial-gradient(circle at center, transparent 30%, rgba(15,23,42,0.06) 75%);"></div>
 
         <!-- Floating orbs container -->
         <div id="orbs-layer" class="absolute inset-0 z-30 pointer-events-none"></div>
 
         <!-- Center prompt hint -->
         <div id="hint-text"
-             class="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs px-4 py-1.5 rounded-full bg-white/10 text-white/70 backdrop-blur pointer-events-none z-10">
+          class="absolute bottom-8 left-1/2 -translate-x-1/2 text-xs px-4 py-1.5 rounded-full bg-white/10 text-white/70 backdrop-blur pointer-events-none z-10">
           Tap anywhere • Pop the glowing orbs
         </div>
       </div>
@@ -212,7 +233,8 @@
             <div id="haptic-dot" class="w-1.5 h-1.5 rounded-full bg-violet-400"></div>
             <span id="haptic-status">Haptics ready</span>
           </div>
-          <div onclick="requestNotificationPermission()" class="cursor-pointer hover:text-slate-200 transition flex items-center gap-x-1">
+          <div onclick="requestNotificationPermission()"
+            class="cursor-pointer hover:text-slate-200 transition flex items-center gap-x-1">
             <span id="notif-status">Notifications: off</span>
           </div>
         </div>
@@ -222,35 +244,35 @@
       <!-- Action Buttons -->
       <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mt-5">
         <button onclick="startBreathing()"
-                class="calm-btn flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-sky-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
+          class="calm-btn flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-sky-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
           <div class="text-xl">🌬️</div>
           <div class="text-sm font-medium">Guided Breathe</div>
           <div class="text-[10px] text-slate-500">4-7-8 cycle</div>
         </button>
 
         <button onclick="triggerColorWave()"
-                class="calm-btn flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-emerald-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
+          class="calm-btn flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-emerald-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
           <div class="text-xl">🌊</div>
           <div class="text-sm font-medium">Color Wave</div>
           <div class="text-[10px] text-slate-500">Gentle palette flow</div>
         </button>
 
         <button onclick="triggerReleasePulse()"
-                class="calm-btn flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-violet-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
+          class="calm-btn flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-violet-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
           <div class="text-xl">💫</div>
           <div class="text-sm font-medium">Release Pulse</div>
           <div class="text-[10px] text-slate-500">Rapid calm release</div>
         </button>
 
         <button onclick="sendCalmNotification()"
-                class="calm-btn flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-amber-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
+          class="calm-btn flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-amber-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
           <div class="text-xl">🔔</div>
           <div class="text-sm font-medium">Send Notification</div>
           <div class="text-[10px] text-slate-500">System + in-app</div>
         </button>
 
         <button onclick="clearAllOrbs()"
-                class="calm-btn col-span-2 sm:col-span-1 flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-rose-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
+          class="calm-btn col-span-2 sm:col-span-1 flex flex-col items-center justify-center gap-1 px-4 py-3.5 bg-slate-900 border border-slate-700 hover:border-rose-600 hover:bg-slate-800 active:bg-slate-950 rounded-3xl transition">
           <div class="text-xl">🧹</div>
           <div class="text-sm font-medium">Clear Orbs</div>
         </button>
@@ -284,15 +306,10 @@
     let animationFrame = null;
 
     const CALMING_COLORS = [
-      '#bae6fd', // sky-200
-      '#a5f3fc', // cyan-200
-      '#c4d0ff', // indigo-200
-      '#ddd6fe', // violet-200
-      '#fbcfe8', // pink-200
-      '#d1fae5', // emerald-200
-      '#fef3c7', // amber-200
-      '#e0e7ff', // indigo-100
-      '#f3e8ff', // fuchsia-100
+      '#ff2d55', '#ff9500', '#ffcc00', '#34c759',
+      '#00c7fd', '#007aff', '#5856d6', '#af52de',
+      '#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3',
+      '#54a0ff', '#5f27cd', '#00d2d3', '#e056fd'
     ];
 
     const CALM_MESSAGES = [
@@ -300,13 +317,13 @@
       "You are safe right now.",
       "Inhale peace. Exhale stress.",
       "Let go. Just for this moment.",
-      "Softness spreading inside.",
+      "Doinks Of Calmness.",
       "Your breath is your anchor.",
       "Releasing what no longer serves.",
       "Notice the quiet inside you.",
       "Everything can wait.",
-      "One gentle tap at a time.",
-      "The calm is already here.",
+      "X is not twitter.",
+      "Roger is very cool.",
       "You are allowed to rest.",
     ];
 
@@ -375,6 +392,7 @@
         this.decay = this.life;
         this.friction = 0.975;
       }
+
       update() {
         this.x += this.vx;
         this.y += this.vy;
@@ -383,6 +401,7 @@
         this.life--;
         this.alpha = (this.life / this.decay) * 0.92;
       }
+
       draw(ctx) {
         ctx.save();
         ctx.globalAlpha = Math.max(this.alpha, 0.08);
@@ -447,7 +466,7 @@
               hapticStatus.textContent = 'Haptics ready';
             }
           }, 850);
-        } catch (e) {}
+        } catch (e) { }
       } else {
         hapticStatus.textContent = 'Visual only (no vibration API)';
         setTimeout(() => {
@@ -461,11 +480,12 @@
 
     // Soft audio feedback using Web Audio
     let audioCtx;
+
     function getAudioContext() {
       if (!audioCtx) {
         try {
           audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        } catch (e) {}
+        } catch (e) { }
       }
       return audioCtx;
     }
@@ -506,7 +526,7 @@
           osc.stop();
           osc.disconnect();
         }, 900);
-      } catch (e) {}
+      } catch (e) { }
     }
 
     // Toast / In-app notifications
@@ -548,8 +568,8 @@
     // Main interaction: click / tap on screen
     function handleTap(e) {
       const rect = canvas.getBoundingClientRect();
-      const x = (e.clientX || (e.touches && e.touches[0].clientX) || (rect.left + rect.width/2)) - rect.left;
-      const y = (e.clientY || (e.touches && e.touches[0].clientY) || (rect.top + rect.height/2)) - rect.top;
+      const x = (e.clientX || (e.touches && e.touches[0].clientX) || (rect.left + rect.width / 2)) - rect.left;
+      const y = (e.clientY || (e.touches && e.touches[0].clientY) || (rect.top + rect.height / 2)) - rect.top;
 
       // Particle burst
       spawnParticles(x, y, 32);
@@ -584,6 +604,7 @@
       // Mouse
       canvas.addEventListener('mousedown', (e) => {
         handleTap(e);
+
         // allow drag taps for more fun
         const onMove = (ev) => {
           if (Math.random() < 0.38) handleTap(ev);
@@ -738,7 +759,7 @@
       addToLog('All orbs cleared.');
     }
 
-    // Guided breathing
+    // Guided breathing - exactly 2 full cycles, ending on exhale
     function startBreathing() {
       if (isBreathing) return;
       isBreathing = true;
@@ -752,13 +773,13 @@
       breathingContainer.classList.remove('hidden');
       breathingContainer.classList.add('flex', 'items-center', 'justify-center');
 
-      let idx = 0;
-      let cycle = 0;
+      let phaseIndex = 0;
+      const totalPhases = 6; // exactly 2 cycles (Inhale → Hold → Exhale) x 2
 
       function runPhase() {
         if (!isBreathing) return;
 
-        const phase = phases[idx];
+        const phase = phases[phaseIndex % phases.length];
         breatheText.textContent = phase.label;
         breatheSub.textContent = phase.sub;
 
@@ -771,10 +792,9 @@
         triggerHaptic(phase.label === 'Exhale' ? [18, 50] : [24]);
 
         setTimeout(() => {
-          idx = (idx + 1) % phases.length;
-          cycle++;
+          phaseIndex++;
 
-          if (cycle >= 4) { // finish after a few cycles
+          if (phaseIndex >= totalPhases) {
             endBreathing();
           } else {
             runPhase();
@@ -808,9 +828,15 @@
       }, 420);
     }
 
-    // Color Wave
+    // Color Wave - many brilliant vibrant screens
     function triggerColorWave() {
-      const wave = [...CALMING_COLORS];
+      const wave = [
+        '#ff2d55', '#ff9500', '#ffcc00', '#34c759',
+        '#00c7fd', '#007aff', '#5856d6', '#af52de',
+        '#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3',
+        '#54a0ff', '#5f27cd', '#00d2d3', '#e056fd',
+        '#ff2d55', '#ff9500', '#34c759', '#007aff'
+      ];
       let i = 0;
 
       addToLog('Color wave flowing...');
@@ -822,10 +848,16 @@
           setScreenColor('#bae6fd');
           return;
         }
-        setScreenColor(wave[i], i < 2);
-        triggerHaptic([12]);
+        setScreenColor(wave[i], true); // instant vivid flash
+        triggerHaptic([10]);
+
+        // Extra visual pop with particles on every color
+        const cx = Math.random() * canvas.width;
+        const cy = Math.random() * canvas.height * 0.85;
+        spawnParticles(cx, cy, 18, wave[i]);
+
         i++;
-      }, 540);
+      }, 260); // faster = more colors shown quickly
     }
 
     // Release Pulse: intense calm trigger
@@ -913,7 +945,7 @@
 
           // Auto close after 4s
           setTimeout(() => notif.close(), 4200);
-        } catch (e) {}
+        } catch (e) { }
       } else if (!silent) {
         // Gentle nudge
         notifStatus.textContent = 'Tap here to enable';
@@ -931,6 +963,7 @@
 
     // Auto-spawn floating orbs periodically
     let orbInterval = null;
+
     function startOrbSpawner() {
       // Initial orbs
       setTimeout(() => spawnOrbsBatch(2), 650);
@@ -1069,10 +1102,10 @@
     }
 
     // Boot
-    window.onload = function() {
+    window.onload = function () {
       init();
     };
   </script>
 </body>
-</html>
 
+</html>
